@@ -59,19 +59,19 @@ PLATFORM_PUBLIC_API void* cb_calloc(size_t nmemb, size_t size) throw() {
 }
 
 PLATFORM_PUBLIC_API void* cb_realloc(void* ptr, size_t size) throw() {
-    cb_invoke_delete_hook(ptr);
+    cb_invoke_delete_hook(ptr, 0);
     void* result = MEM_ALLOC(realloc)(ptr, size);
     cb_invoke_new_hook(result, size);
     return result;
 }
 
 PLATFORM_PUBLIC_API void cb_free(void* ptr) throw() {
-    cb_invoke_delete_hook(ptr);
+    cb_invoke_delete_hook(ptr, 0);
     return MEM_ALLOC(free)(ptr);
 }
 
 PLATFORM_PUBLIC_API void cb_sized_free(void* ptr, size_t size) throw() {
-    cb_invoke_delete_hook(ptr);
+    cb_invoke_delete_hook(ptr, size);
 #if defined(HAVE_JEMALLOC_SDALLOCX)
     if (ptr != nullptr) {
         MEM_ALLOC(sdallocx)(ptr, size, /* no flags */ 0);
@@ -141,8 +141,8 @@ void cb_invoke_new_hook(const void* ptr, size_t size) {
     }
 }
 
-void cb_invoke_delete_hook(const void* ptr) {
+void cb_invoke_delete_hook(const void* ptr, size_t size) {
     if (cb_delete_hook != nullptr) {
-        cb_delete_hook(ptr);
+        cb_delete_hook(ptr, size);
     }
 }

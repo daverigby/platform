@@ -106,8 +106,10 @@ typedef void(*cb_malloc_new_hook_t)(const void *ptr, size_t sz);
  * been freed by the underlying allocator.
  *
  * @param ptr Address of memory to be deallocated.
+ * @param sz Size in bytes of memory to be deallocated (if known), otherwise
+ *        zero.
  */
-typedef void(*cb_malloc_delete_hook_t)(const void *ptr);
+typedef void(*cb_malloc_delete_hook_t)(const void *ptr, size_t sz);
 
 PLATFORM_PUBLIC_API bool cb_add_new_hook(cb_malloc_new_hook_t f);
 PLATFORM_PUBLIC_API bool cb_remove_new_hook(cb_malloc_new_hook_t f);
@@ -117,6 +119,6 @@ PLATFORM_PUBLIC_API bool cb_remove_delete_hook(cb_malloc_delete_hook_t f);
 /* Functions to call the new / delete hooks; if they are non-null. */
 PLATFORM_PUBLIC_API void cb_invoke_new_hook(const void* ptr, size_t size);
 
-PLATFORM_PUBLIC_API void cb_invoke_delete_hook(const void* ptr);
+PLATFORM_PUBLIC_API void cb_invoke_delete_hook(const void* ptr, size_t size);
 
 #endif // __cplusplus
